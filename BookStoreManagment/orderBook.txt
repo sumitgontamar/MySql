@@ -1,0 +1,326 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JTable;
+import javax.swing.JButton;
+import java.awt.Color;
+
+public class OrderBook extends JFrame implements ActionListener {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField Id;
+	private JTextField Booknm;
+	private JTable table;
+	
+	JButton Clear = new JButton("Clear");
+	JButton Remove = new JButton("Remove");
+	JButton Back = new JButton("Back");
+	JButton Add = new JButton("Add");
+	JButton Search = new JButton("Search");
+	private final JLabel lblNewLabel_2 = new JLabel("Price :");
+	private final JTextField Price = new JTextField();
+	private final JLabel lblNewLabel_3 = new JLabel("Author :");
+	private final JTextField auth = new JTextField();
+	private final JLabel lblNewLabel_4 = new JLabel("Quantity :");
+	private final JTextField quan = new JTextField();
+	private final JLabel lblNewLabel_5 = new JLabel("Available");
+	private final JLabel lblNewLabel_6 = new JLabel("Required");
+	private final JTextField quanre = new JTextField();
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					OrderBook frame = new OrderBook();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public OrderBook() {
+		quanre.setBounds(892, 97, 115, 32);
+		quanre.setColumns(10);
+		quan.setBounds(607, 100, 149, 32);
+		quan.setColumns(10);
+		auth.setBounds(659, 58, 348, 32);
+		auth.setColumns(10);
+		Price.setBounds(186, 100, 158, 32);
+		Price.setColumns(10);
+		setTitle("Order Books");
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Chandan M\\Pictures\\Screenshots\\Screenshot 2023-11-30 200551.png"));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1101, 546);
+		contentPane = new JPanel();
+		contentPane.setForeground(new Color(255, 255, 255));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Book ID :");
+		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(28, 10, 138, 32);
+		contentPane.add(lblNewLabel);
+		
+		Id = new JTextField();
+		Id.setBounds(186, 13, 256, 29);
+		contentPane.add(Id);
+		Id.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Book Name :");
+		lblNewLabel_1.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1.setBounds(38, 55, 138, 32);
+		contentPane.add(lblNewLabel_1);
+		
+		Booknm = new JTextField();
+		Booknm.setBounds(186, 58, 348, 29);
+		contentPane.add(Booknm);
+		Booknm.setColumns(10);
+		
+		table = new JTable();
+		table.setBounds(0, 216, 1087, 293);
+		contentPane.add(table);
+		
+		Back.setForeground(new Color(0, 0, 0));
+		Back.setBackground(new Color(255, 255, 255));
+		Back.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		Back.setBounds(508, 175, 85, 21);
+		contentPane.add(Back);
+		Back.addActionListener(this);
+		
+		Remove.setBackground(new Color(255, 255, 255));
+		Remove.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		Remove.setBounds(243, 175, 100, 21);
+		contentPane.add(Remove);
+		Remove.addActionListener(this);
+		
+		Clear.setBackground(new Color(255, 255, 255));
+		Clear.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		Clear.setBounds(373, 175, 100, 21);
+		contentPane.add(Clear);
+		Clear.addActionListener(this);
+		
+		Add.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		Add.setBounds(114, 176, 100, 21);
+		contentPane.add(Add);
+		
+		Search.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		Search.setBounds(690, 11, 100, 32);
+		contentPane.add(Search);
+		Search.addActionListener(this);
+		
+		lblNewLabel_2.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2.setBounds(28, 97, 138, 32);
+		
+		contentPane.add(lblNewLabel_2);
+		
+		contentPane.add(Price);
+		lblNewLabel_3.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_3.setBounds(548, 55, 131, 32);
+		
+		contentPane.add(lblNewLabel_3);
+		
+		contentPane.add(auth);
+		lblNewLabel_4.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel_4.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_4.setBounds(373, 99, 100, 32);
+		
+		contentPane.add(lblNewLabel_4);
+		
+		contentPane.add(quan);
+		lblNewLabel_5.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel_5.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_5.setBounds(469, 97, 124, 32);
+		
+		contentPane.add(lblNewLabel_5);
+		lblNewLabel_6.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel_6.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_6.setBounds(766, 97, 131, 32);
+		
+		contentPane.add(lblNewLabel_6);
+		
+		contentPane.add(quanre);
+		Add.addActionListener(this);
+		String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+		String mysqluser="root";
+		String mysqlpass="Chandan@542";
+		String query="truncate table bookorder;";
+		try {
+			Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+			java.sql.Statement stm= conn.createStatement();
+			stm.execute(query);
+		}
+		
+		catch(Exception e1) {
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource()==Back) {
+			this.dispose();
+		}
+		else if(e.getSource()== Search){
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+			String mysqluser="root";
+			String mysqlpass="Chandan@542";
+			int ID=Integer.parseInt(Id.getText());
+			String query="select * from bookavail where id='"+ID+"';";
+			
+			try {
+				Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+				java.sql.Statement stm= conn.createStatement();
+				ResultSet rs= stm.executeQuery(query);
+				ResultSetMetaData rsmd=rs.getMetaData();
+				
+				int cols = rsmd.getColumnCount();
+				String[] colName=new String[cols];
+				for(int i=0;i<cols;i++) {
+					colName[i]=rsmd.getColumnName(i+1);
+					model.setColumnIdentifiers(colName);
+				}
+		
+				if(rs.next()) {
+					Id.setText(Integer.toString(rs.getInt("id")));
+					Booknm.setText(rs.getString("name"));
+					auth.setText(rs.getString("author"));
+					Price.setText(Integer.toString(rs.getInt("price")));
+					quan.setText(Integer.toString(rs.getInt("quantity")));
+					
+					//model.addRow(new Object[] {Id,Booknm,auth,Price,quan});
+					
+					}
+				
+				}
+			catch(Exception e1) {
+				JOptionPane.showMessageDialog(this, e1.getMessage());
+			}
+		}
+		else if(e.getSource()==Add) {
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+			String mysqluser="root";
+			String mysqlpass="Chandan@542";
+			int ID=Integer.parseInt(Id.getText());
+			int pr=Integer.parseInt(Price.getText());
+			int q=Integer.parseInt(quanre.getText());
+			String query="insert into bookorder values('"+ID+"','"+Booknm.getText()+"','"+auth.getText()+"','"+pr+"','"+q+"');";
+			String query1="select * from bookorder where id='"+ID+"';";
+			
+			try {
+				Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+				java.sql.Statement stm= conn.createStatement();
+				stm.execute(query);
+				ResultSet rs= stm.executeQuery(query1);
+				ResultSetMetaData rsmd=rs.getMetaData();
+				
+				int cols = rsmd.getColumnCount();
+				String[] colName=new String[cols];
+				for(int i=0;i<cols;i++) {
+					colName[i]=rsmd.getColumnName(i+1);
+					model.setColumnIdentifiers(colName);
+				}
+		
+				if(rs.next()) {
+					Id.setText(Integer.toString(rs.getInt("id")));
+					Booknm.setText(rs.getString("name"));
+					auth.setText(rs.getString("author"));
+					Price.setText(Integer.toString(rs.getInt("price")));
+					quan.setText(Integer.toString(rs.getInt("quantity")));
+					
+					model.addRow(new Object[] {Id.getText(),Booknm.getText(),auth.getText(),Price.getText(),quan.getText()});
+					
+					}
+				
+				}
+			catch(Exception e1) {
+				JOptionPane.showMessageDialog(this, e1.getMessage());
+			}
+			
+		}
+		else if(e.getSource()==Clear) {
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+			String mysqluser="root";
+			String mysqlpass="Chandan@542";
+			String query="truncate table bookorder;";
+			try {
+				Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+				java.sql.Statement stm= conn.createStatement();
+				stm.execute(query);
+				
+				int count=model.getRowCount();
+				
+				for(int i=count-1;i>=0;i--) {
+
+					model.removeRow(i);	
+				}
+				Id.setText("");
+				Booknm.setText("");
+				auth.setText("");
+				Price.setText("");
+				quan.setText("");
+				
+				}
+		
+			catch(Exception e1) {
+				JOptionPane.showMessageDialog(this, e1.getMessage());
+			}
+		}
+		else if(e.getSource()==Remove) {
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			int ID=Integer.parseInt(Id.getText());
+			String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+			String mysqluser="root";
+			String mysqlpass="Chandan@542";
+			String query="delete from bookorder where id='"+ID+"';";
+			try {
+				Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+				java.sql.Statement stm= conn.createStatement();
+				stm.execute(query);
+				
+				if(table.getSelectedRowCount()==1)
+				model.removeRow(table.getSelectedRow());
+				
+				}
+		
+			catch(Exception e1) {
+				JOptionPane.showMessageDialog(this, e1.getMessage());
+			}
+		}
+	}
+}

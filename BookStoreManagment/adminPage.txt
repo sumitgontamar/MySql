@@ -1,0 +1,374 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTable;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.JButton;
+import java.awt.Color;
+
+public class AdminLogin extends JFrame implements ActionListener{
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTable table;
+	private JTextField bokid1;
+	private JTextField quan1;
+	private JTextField bokid2;
+	private JTextField auth;
+	private JTextField quan2;
+	private JTextField boknm;
+	private JTextField prc;
+	JButton exit = new JButton("Exit");
+	JButton insert = new JButton("Insert");
+	JButton update = new JButton("Update");
+	JButton delete = new JButton("Delete");
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					AdminLogin frame = new AdminLogin();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public AdminLogin() {
+		setTitle("Admin Login");
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Chandan M\\Pictures\\Screenshots\\Screenshot 2023-11-30 200551.png"));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1090, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 0, 1076, 274);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setBounds(0, 0, 1076, 274);
+		
+		JLabel lblNewLabel_1 = new JLabel("Book ID");
+		lblNewLabel_1.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1.setBounds(20, 322, 114, 28);
+		contentPane.add(lblNewLabel_1);
+		
+		bokid1 = new JTextField();
+		bokid1.setBounds(135, 322, 96, 28);
+		contentPane.add(bokid1);
+		bokid1.setColumns(10);
+		
+		JLabel lblNewLabel_2 = new JLabel("Quantity");
+		lblNewLabel_2.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2.setBounds(263, 323, 114, 28);
+		contentPane.add(lblNewLabel_2);
+		
+		quan1 = new JTextField();
+		quan1.setBounds(390, 322, 105, 28);
+		contentPane.add(quan1);
+		quan1.setColumns(10);
+		
+		update.setBackground(new Color(128, 255, 255));
+		update.setFont(new Font("Times New Roman", Font.BOLD, 16));
+		update.setBounds(555, 322, 133, 28);
+		contentPane.add(update);
+		update.addActionListener(this);
+		
+		
+		JLabel lblNewLabel_1_1 = new JLabel("Book ID");
+		lblNewLabel_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1_1.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblNewLabel_1_1.setBounds(20, 414, 114, 28);
+		contentPane.add(lblNewLabel_1_1);
+		
+		bokid2 = new JTextField();
+		bokid2.setColumns(10);
+		bokid2.setBounds(135, 416, 96, 28);
+		contentPane.add(bokid2);
+		
+		JLabel lblNewLabel_2_1 = new JLabel("Author");
+		lblNewLabel_2_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2_1.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblNewLabel_2_1.setBounds(658, 416, 114, 28);
+		contentPane.add(lblNewLabel_2_1);
+		
+		JLabel lblNewLabel_2_2 = new JLabel("Quantity");
+		lblNewLabel_2_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2_2.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblNewLabel_2_2.setBounds(273, 467, 114, 28);
+		contentPane.add(lblNewLabel_2_2);
+		
+		auth = new JTextField();
+		auth.setColumns(10);
+		auth.setBounds(755, 416, 311, 28);
+		contentPane.add(auth);
+		
+		quan2 = new JTextField();
+		quan2.setColumns(10);
+		quan2.setBounds(390, 467, 105, 28);
+		contentPane.add(quan2);
+		
+		JLabel lblNewLabel_1_1_1 = new JLabel("Book Name");
+		lblNewLabel_1_1_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1_1_1.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblNewLabel_1_1_1.setBounds(238, 416, 114, 28);
+		contentPane.add(lblNewLabel_1_1_1);
+		
+		JLabel lblNewLabel_1_1_2 = new JLabel("Price");
+		lblNewLabel_1_1_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1_1_2.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblNewLabel_1_1_2.setBounds(20, 467, 114, 28);
+		contentPane.add(lblNewLabel_1_1_2);
+		
+		boknm = new JTextField();
+		boknm.setColumns(10);
+		boknm.setBounds(339, 416, 298, 28);
+		contentPane.add(boknm);
+		
+		prc = new JTextField();
+		prc.setColumns(10);
+		prc.setBounds(135, 469, 105, 28);
+		contentPane.add(prc);
+		
+		insert.setBackground(new Color(128, 255, 255));
+		insert.setFont(new Font("Times New Roman", Font.BOLD, 16));
+		insert.setBounds(555, 472, 133, 28);
+		contentPane.add(insert);
+		insert.addActionListener(this);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 255, 128));
+		panel.setBounds(0, 273, 1076, 43);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Update");
+		lblNewLabel.setBounds(458, 10, 124, 28);
+		panel.add(lblNewLabel);
+		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(255, 255, 128));
+		panel_1.setBounds(0, 361, 1076, 43);
+		contentPane.add(panel_1);
+		panel_1.setLayout(null);
+		
+		JLabel lblNewLabel_3 = new JLabel("Insert");
+		lblNewLabel_3.setBounds(459, 10, 114, 28);
+		panel_1.add(lblNewLabel_3);
+		lblNewLabel_3.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		exit.setFont(new Font("Times New Roman", Font.BOLD, 16));
+		exit.setBackground(new Color(128, 255, 255));
+		exit.setBounds(916, 472, 133, 28);
+		contentPane.add(exit);
+		exit.addActionListener(this);
+		
+		
+		delete.setFont(new Font("Times New Roman", Font.BOLD, 16));
+		delete.setBackground(new Color(128, 255, 255));
+		delete.setBounds(738, 472, 133, 28);
+		contentPane.add(delete);
+		delete.addActionListener(this);
+
+		
+		DefaultTableModel model = (DefaultTableModel)table.getModel();
+		String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+		String mysqluser="root";
+		String mysqlpass="Chandan@542";
+		String query="select * from bookavail;";
+		
+		try {
+			Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+			java.sql.Statement stm= conn.createStatement();
+			ResultSet rs= stm.executeQuery(query);
+			ResultSetMetaData rsmd=rs.getMetaData();
+			
+			int cols = rsmd.getColumnCount();
+			String[] colName=new String[cols];
+			for(int i=0;i<cols;i++) {
+				colName[i]=rsmd.getColumnName(i+1);
+				model.setColumnIdentifiers(colName);
+			}
+	
+			while(rs.next()) {
+				int bookid=rs.getInt("id");
+				String name=rs.getString("name");
+				String author=rs.getString("author");
+				int price=rs.getInt("price");
+				int quantity=rs.getInt("quantity");
+				
+				model.addRow(new Object[] {bookid,name,author,price,quantity});
+				
+				}
+			
+			}
+		catch(Exception e1) {
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+		}
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource()==exit) {
+			LoginPage bok=new LoginPage();
+			bok.setVisible(true);
+			this.dispose();
+			
+		}
+		else if(e.getSource()==insert) {
+			
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+			String mysqluser="root";
+			String mysqlpass="Chandan@542";
+			int ID=Integer.parseInt(bokid2.getText());
+			int pr=Integer.parseInt(prc.getText());
+			int q=Integer.parseInt(quan2.getText());
+			String query="insert into bookavail values('"+ID+"','"+boknm.getText()+"','"+auth.getText()+"','"+pr+"','"+q+"');";
+			String query1="select * from bookavail where id='"+ID+"';";
+			
+			try {
+				Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+				java.sql.Statement stm= conn.createStatement();
+				stm.execute(query);
+				ResultSet rs= stm.executeQuery(query1);
+				ResultSetMetaData rsmd=rs.getMetaData();
+				
+				int cols = rsmd.getColumnCount();
+				String[] colName=new String[cols];
+				for(int i=0;i<cols;i++) {
+					colName[i]=rsmd.getColumnName(i+1);
+					model.setColumnIdentifiers(colName);
+				}
+		
+				if(rs.next()) {
+					bokid2.setText(Integer.toString(rs.getInt("id")));
+					boknm.setText(rs.getString("name"));
+					auth.setText(rs.getString("author"));
+					prc.setText(Integer.toString(rs.getInt("price")));
+					quan2.setText(Integer.toString(rs.getInt("quantity")));
+					
+					model.addRow(new Object[] {bokid2.getText(),boknm.getText(),auth.getText(),prc.getText(),quan2.getText()});
+					
+					bokid2.setText("");
+					boknm.setText("");
+					auth.setText("");
+					prc.setText("");
+					quan2.setText("");
+					}
+				
+				}
+			catch(Exception e1) {
+				JOptionPane.showMessageDialog(this, e1.getMessage());
+			}
+			
+		}
+		else if(e.getSource()==delete) {
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			int ID=Integer.parseInt(bokid2.getText());
+			String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+			String mysqluser="root";
+			String mysqlpass="Chandan@542";
+			String query="delete from bookavail where id='"+ID+"';";
+			try {
+				Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+				java.sql.Statement stm= conn.createStatement();
+				stm.execute(query);
+				
+				if(table.getSelectedRowCount()==1)
+				model.removeRow(table.getSelectedRow());
+				
+				}
+		
+			catch(Exception e1) {
+				JOptionPane.showMessageDialog(this, e1.getMessage());
+			}
+			
+		}
+		else if(e.getSource()==update) {
+			
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			int ID=Integer.parseInt(bokid1.getText());
+			String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+			String mysqluser="root";
+			String mysqlpass="Chandan@542";
+			String query="update bookavail set quantity ='"+Integer.parseInt(quan1.getText())+"'where id='"+ID+"';";
+			String query1="select * from bookavail;";
+			try {
+				Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+				java.sql.Statement stm= conn.createStatement();
+				stm.execute(query);
+				
+                int count=model.getRowCount();
+				
+				for(int i=count-1;i>=0;i--) {
+
+					model.removeRow(i);	
+				}
+				
+				ResultSet rs= stm.executeQuery(query1);
+				ResultSetMetaData rsmd=rs.getMetaData();
+				
+				int cols = rsmd.getColumnCount();
+				String[] colName=new String[cols];
+				for(int i=0;i<cols;i++) {
+					colName[i]=rsmd.getColumnName(i+1);
+					model.setColumnIdentifiers(colName);
+				}
+		
+				while(rs.next()) {
+					int bookid=rs.getInt("id");
+					String name=rs.getString("name");
+					String author=rs.getString("author");
+					int price=rs.getInt("price");
+					int quantity=rs.getInt("quantity");
+					
+					model.addRow(new Object[] {bookid,name,author,price,quantity});
+					
+					}
+				
+				}
+		
+			catch(Exception e1) {
+				JOptionPane.showMessageDialog(this, e1.getMessage());
+			}
+		}
+	}
+}

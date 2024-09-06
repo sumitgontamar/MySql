@@ -1,0 +1,117 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
+import javax.swing.JTextField;
+import java.awt.Font;
+import javax.swing.SwingConstants;
+import javax.swing.JButton;
+import java.awt.Color;
+import javax.swing.JLabel;
+import java.awt.Toolkit;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Window.Type;
+import javax.swing.JTextArea;
+
+public class Dashboard extends JFrame implements ActionListener {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	JButton OderDet = new JButton("Order Details");
+	JButton Orderbok = new JButton("Order Book");
+	JButton Exit = new JButton("Exit");
+	JButton BookAvail = new JButton("Book Available");
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Dashboard frame = new Dashboard();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Dashboard() {
+		setTitle("Dashboard");
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Chandan M\\Pictures\\Screenshots\\Screenshot 2023-11-30 200551.png"));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1061, 547);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 0, 255));
+		panel.setBounds(0, 0, 1088, 41);
+		contentPane.add(panel);
+		panel.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Dashboard");
+		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel.setBounds(23, 10, 104, 21);
+		panel.add(lblNewLabel);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(new Color(128, 128, 255));
+		panel_1.setBounds(0, 41, 1088, 460);
+		contentPane.add(panel_1);
+		panel_1.setLayout(null);
+		BookAvail.setBounds(182, 63, 189, 40);
+		panel_1.add(BookAvail);
+		
+		BookAvail.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		BookAvail.addActionListener(this);
+		OderDet.setBounds(542, 63, 163, 40);
+		panel_1.add(OderDet);
+		
+		OderDet.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		Exit.setBounds(543, 161, 151, 40);
+		panel_1.add(Exit);
+		
+		Exit.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		Orderbok.setBounds(182, 161, 189, 40);
+		panel_1.add(Orderbok);
+		
+		Orderbok.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		Orderbok.addActionListener(this);
+		Exit.addActionListener(this);
+		OderDet.addActionListener(this);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource()==BookAvail) {
+			BookAvailable bok=new BookAvailable();
+			bok.setVisible(true);
+		}
+		else if(e.getSource()==Orderbok) {
+			OrderBook bok=new OrderBook();
+			bok.setVisible(true);
+		}
+		else if(e.getSource()==OderDet) {
+			OrderDetails bok=new OrderDetails();
+			bok.setVisible(true);
+		}
+		else if(e.getSource()==Exit) {
+			LoginPage bok=new LoginPage();
+			bok.setVisible(true);
+			this.dispose();
+		}
+	}
+}

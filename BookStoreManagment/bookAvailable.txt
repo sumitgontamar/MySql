@@ -1,0 +1,126 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.Toolkit;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import java.awt.Font;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
+
+public class BookAvailable extends JFrame implements ActionListener {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTable table;
+	JButton Back = new JButton("Back");
+	JButton Get = new JButton("Get Books");
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					BookAvailable frame = new BookAvailable();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	@SuppressWarnings({ "serial"})
+	public BookAvailable() {
+		setTitle("Book Available");
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Chandan M\\Pictures\\Screenshots\\Screenshot 2023-11-30 200551.png"));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1121, 562);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 0, 1097, 444);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setCellSelectionEnabled(true);
+		table.setColumnSelectionAllowed(true);
+		table.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		
+		Get.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		Get.setBounds(398, 454, 105, 31);
+		contentPane.add(Get);
+		Get.addActionListener(this);
+		
+		Back.addActionListener(this);
+		Back.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		Back.setBounds(598, 454, 105, 31);
+		contentPane.add(Back);
+	}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			if(e.getSource()== Back) {
+				JOptionPane.showMessageDialog(this, "Return back to Dashboard");
+				this.dispose();
+			}
+				
+			else if(e.getSource()== Get) {
+				
+				DefaultTableModel model = (DefaultTableModel)table.getModel();
+				String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+				String mysqluser="root";
+				String mysqlpass="Chandan@542";
+				String query="select * from bookavail;";
+				
+				try {
+					Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+					java.sql.Statement stm= conn.createStatement();
+					ResultSet rs= stm.executeQuery(query);
+					ResultSetMetaData rsmd=rs.getMetaData();
+					
+					int cols = rsmd.getColumnCount();
+					String[] colName=new String[cols];
+					for(int i=0;i<cols;i++) {
+						colName[i]=rsmd.getColumnName(i+1);
+						model.setColumnIdentifiers(colName);
+					}
+			
+					while(rs.next()) {
+						int bookid=rs.getInt("id");
+						String name=rs.getString("name");
+						String author=rs.getString("author");
+						int price=rs.getInt("price");
+						int quantity=rs.getInt("quantity");
+						
+						model.addRow(new Object[] {bookid,name,author,price,quantity});
+						
+						}
+					
+					}
+				catch(Exception e1) {
+					JOptionPane.showMessageDialog(this, e1.getMessage());
+				}
+			}
+		}
+}
+

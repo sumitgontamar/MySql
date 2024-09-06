@@ -1,0 +1,169 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTable;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+
+public class OrderDetails extends JFrame implements ActionListener {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private final JTable table = new JTable();
+	private JTextField amount;
+	JButton back = new JButton("Back");
+	JButton clear = new JButton("Clear");
+	JButton Order = new JButton("Pay and Order");
+	int sum=0;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					OrderDetails frame = new OrderDetails();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public OrderDetails() {
+		setTitle("Order Summary");
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Chandan M\\Pictures\\Screenshots\\Screenshot 2023-11-30 200551.png"));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 828, 434);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		table.setBounds(0, 0, 814, 193);
+		contentPane.add(table);
+		
+		JLabel lblNewLabel = new JLabel("Total Amount :");
+		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(77, 218, 168, 26);
+		contentPane.add(lblNewLabel);
+		
+		amount = new JTextField();
+		amount.setBounds(255, 218, 150, 26);
+		contentPane.add(amount);
+		amount.setColumns(10);
+		
+		Order.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		Order.setBounds(138, 298, 150, 34);
+		contentPane.add(Order);
+		Order.addActionListener(this);
+		
+		clear.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		clear.setBounds(332, 298, 158, 34);
+		contentPane.add(clear);
+		clear.addActionListener(this);
+		
+		back.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		back.setBounds(527, 298, 150, 34);
+		contentPane.add(back);
+		back.addActionListener(this);
+		
+		DefaultTableModel model = (DefaultTableModel)table.getModel();
+		String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+		String mysqluser="root";
+		String mysqlpass="Chandan@542";
+		String query="select * from bookorder;";
+	
+		try {
+			Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+			java.sql.Statement stm= conn.createStatement();
+			ResultSet rs= stm.executeQuery(query);
+			ResultSetMetaData rsmd=rs.getMetaData();
+			
+			int cols = rsmd.getColumnCount();
+			String[] colName=new String[cols];
+			for(int i=0;i<cols;i++) {
+				colName[i]=rsmd.getColumnName(i+1);
+				model.setColumnIdentifiers(colName);
+			}
+	
+			while(rs.next()) {
+				int bookid=rs.getInt("id");
+				String name=rs.getString("name");
+				String author=rs.getString("author");
+				int price=rs.getInt("price");
+				int quantity=rs.getInt("quantity");
+				
+				sum=sum+quantity*price;
+				
+				model.addRow(new Object[] {bookid,name,author,price,quantity});
+				
+				}
+			
+			}
+		catch(Exception e1) {
+			JOptionPane.showMessageDialog(this, e1.getMessage());
+		}
+		
+		amount.setText(Integer.toString(sum));
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource()==back) {
+			this.dispose();
+		}
+		else if(e.getSource()==clear) {
+			sum=0;
+			amount.setText("");
+			DefaultTableModel model = (DefaultTableModel)table.getModel();
+			String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+			String mysqluser="root";
+			String mysqlpass="Chandan@542";
+			String query="truncate table bookorder;";
+			try {
+				Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+				java.sql.Statement stm= conn.createStatement();
+				stm.execute(query);
+				
+				int count=model.getRowCount();
+				
+				for(int i=count-1;i>=0;i--) {
+
+					model.removeRow(i);	
+				}
+				
+				}
+		
+			catch(Exception e1) {
+				JOptionPane.showMessageDialog(this, e1.getMessage());
+			}
+	}
+		else if(e.getSource()==Order) {
+			JOptionPane.showMessageDialog(this, "Order placed successfully!");
+		}
+}
+}

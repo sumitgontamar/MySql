@@ -1,0 +1,216 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import com.mysql.cj.xdevapi.Statement;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Color;
+
+import javax.swing.SwingConstants;
+import java.awt.*;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JRadioButton;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+
+public class LoginPage extends JFrame implements ActionListener {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField Username;
+	private JPasswordField passw;
+	JRadioButton Userlog = new JRadioButton("User Login");
+	JRadioButton Adminlog= new JRadioButton("Admin Login");
+	JButton Logbut = new JButton("SUBMIT");
+	JButton Resetbut = new JButton("RESET");
+	int Selected=-1;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					LoginPage frame = new LoginPage();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 * @param ActionEvent 
+	 */
+	public LoginPage() {
+		setTitle("Login");
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Chandan M\\Pictures\\Screenshots\\Screenshot 2023-11-30 200551.png"));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1107, 573);
+		contentPane = new JPanel();
+		contentPane.setBackground(new Color(192, 192, 192));
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		ButtonGroup grp=new ButtonGroup();
+		grp.add(Userlog);
+		grp.add(Adminlog);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(new Color(255, 0, 255));
+		panel.setBounds(10, 10, 1073, 53);
+		contentPane.add(panel);
+		
+		JLabel lblNewLabel = new JLabel("Book Store Management");
+		lblNewLabel.setFont(new Font("Solid Edge Stencil", Font.BOLD, 30));
+		lblNewLabel.setForeground(new Color(255, 255, 255));
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBackground(new Color(255, 0, 255));
+		panel.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("LOGIN");
+		lblNewLabel_1.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		lblNewLabel_1.setBounds(479, 78, 74, 33);
+		contentPane.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("User Name");
+		lblNewLabel_2.setBackground(new Color(255, 255, 255));
+		lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_2.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblNewLabel_2.setBounds(393, 183, 74, 13);
+		contentPane.add(lblNewLabel_2);
+		
+		Username = new JTextField();
+		Username.setBounds(551, 178, 144, 26);
+		contentPane.add(Username);
+		Username.setColumns(10);
+		
+		JLabel lblNewLabel_3 = new JLabel("Password");
+		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_3.setBackground(new Color(255, 255, 255));
+		lblNewLabel_3.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblNewLabel_3.setBounds(393, 234, 74, 19);
+		contentPane.add(lblNewLabel_3);
+		
+		passw = new JPasswordField();
+		passw.setBounds(551, 232, 144, 26);
+		contentPane.add(passw);
+		
+		Logbut.setBounds(393, 322, 85, 21);
+		contentPane.add(Logbut);
+		Logbut.addActionListener(this);
+		
+		Resetbut.setBounds(551, 322, 85, 21);
+		contentPane.add(Resetbut);
+		Resetbut.addActionListener(this);
+		
+		Userlog.setBounds(393, 137, 103, 21);
+		contentPane.add(Userlog);
+		Userlog.addActionListener(this);
+		
+		Adminlog.setBounds(556, 137, 103, 21);
+		contentPane.add(Adminlog);
+		Adminlog.addActionListener(this);
+	}
+	
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+				if(e.getSource()==Userlog) {
+					Selected=1;
+				}
+				else if(e.getSource()==Adminlog){
+					Selected=0;
+				}
+				
+				if(e.getSource()== Logbut && Selected==1 ) {
+				String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+				String mysqluser="root";
+				String mysqlpass="Chandan@542";
+				String pswrd=new String(passw.getPassword());
+				String user=Username.getText();
+				String query="select password from users where username='"+user+"';";
+				try {
+					Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+					java.sql.Statement stm= conn.createStatement();
+					ResultSet rs= stm.executeQuery(query);
+			
+					if(rs.next()) {
+						String realpass=rs.getString("password");
+						if(realpass.equals(pswrd)) {
+							Dashboard dsh=new Dashboard();
+							dsh.setVisible(true);
+							this.dispose();
+						}
+						else {
+							JOptionPane.showMessageDialog(this, "Invalid! Username or Password,Please try again.");
+						}
+					}
+					else {
+						JOptionPane.showMessageDialog(this, "Wrong username,Try again.");
+					}
+				}
+				catch(Exception e1) {
+					JOptionPane.showMessageDialog(this, e1.getMessage());
+				}
+			}
+				else if (e.getSource()==Resetbut) {
+					Username.setText("");
+					passw.setText("");
+					Selected=-1;
+				}
+				else if(e.getSource()== Logbut && Selected==0 ) {
+					String url="jdbc:mysql://localhost:3306/onlinebookstore?useSSL=false&allowPublicKeyRetrieval=true";
+					String mysqluser="root";
+					String mysqlpass="Chandan@542";
+					String pswrd=new String(passw.getPassword());
+					String user=Username.getText();
+					String query="select password from users where username='"+user+"';";
+					try {
+						Connection conn=DriverManager.getConnection(url,mysqluser,mysqlpass);
+						java.sql.Statement stm= conn.createStatement();
+						ResultSet rs= stm.executeQuery(query);
+				
+						if(rs.next()) {
+							String realpass=rs.getString("password");
+							if(realpass.equals(pswrd)) {
+								AdminLogin dsh=new AdminLogin();
+								dsh.setVisible(true);
+								this.dispose();
+							}
+							else {
+								JOptionPane.showMessageDialog(this, "Invalid! Username or Password,Please try again.");
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(this, "Wrong username,Try again.");
+						}
+					}
+					catch(Exception e1) {
+						JOptionPane.showMessageDialog(this, e1.getMessage());
+					}
+				}
+				else if (e.getSource()== Logbut && Selected==-1) {
+					JOptionPane.showMessageDialog(this,"Choose user or admin login");
+				}
+			}
+}
